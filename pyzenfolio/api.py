@@ -173,7 +173,6 @@ class PyZenfolio(object):
 
     def UploadPhoto(self, photoset, path, filename=None):
         assert_type(photoset, 'PhotoSet', 'photoset', 'UploadPhoto')
-        upload_url = photoset.UploadUrl
 
         with open(path, 'rb') as fid:
             data = fid.read()
@@ -186,6 +185,14 @@ class PyZenfolio(object):
             params = {
                 'filename': filename,
             }
+
+            if 'video' in headers['Content-Type']:
+                upload_url = photoset.VideoUploadUrl
+            elif 'image' in headers['Content-Type']:
+                upload_url = photoset.UploadUrl
+            else:
+                upload_url = photoset.RawUploadUrl
+
             request = requests.post(upload_url,
                                     params=params,
                                     data=data,
